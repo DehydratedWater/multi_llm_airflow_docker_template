@@ -326,11 +326,43 @@ services:
     networks:
       - connection_to_airflow
 
-  llm-server:
+  llm-server-1:
     image: llm-server
     build: .
     ports:
       - "5556:5556"
+    volumes:
+      - "./models:/app/models"
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            capabilities: [gpu]
+    networks:
+      - connection_to_airflow
+
+  llm-server-2:
+    image: llm-server
+    build: .
+    ports:
+      - "5557:5556"
+    volumes:
+      - "./models:/app/models"
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            capabilities: [gpu]
+    networks:
+      - connection_to_airflow
+
+  llm-server-3:
+    image: llm-server
+    build: .
+    ports:
+      - "5558:5556"
     volumes:
       - "./models:/app/models"
     deploy:

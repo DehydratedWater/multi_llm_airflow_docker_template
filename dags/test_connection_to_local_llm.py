@@ -11,11 +11,11 @@ default_args = {
 
 
 def request_result_from_llm():
-    model = "models/mixtral-8x7b-v0.1.Q5_K_M.gguf"
+    model = "models/llama-2-13b-chat.Q5_K_M.gguf"
 
     llm = ChatOpenAI(temperature=0.7,
                     model=model, 
-                    openai_api_base="http://llm-server:5556/v1", 
+                    openai_api_base="http://llm-server-1:5556/v1", 
                     openai_api_key="sx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                     max_tokens=2000,
                     model_kwargs={
@@ -33,7 +33,7 @@ def request_result_from_llm():
     return full_result
 
 with DAG(
-    dag_id='test_local_llm_dag',
+    dag_id='test_single_local_llm_dag',
     default_args=default_args,
     description='Test Local LLM DAG',
     catchup=False,

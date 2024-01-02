@@ -1,5 +1,5 @@
 #!/bin/bash
 
-./run_llm_server.sh
+# ./run_llm_server.sh
 
 docker compose up -d
