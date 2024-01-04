@@ -1,10 +1,14 @@
 #!/usr/bin/bash
 
+
 num=4
 model="models/llama-2-13b-chat.Q5_K_M.gguf"
 split=0
 n_threads=1
 
+parent_dir_name=$PWD
+last=$(echo $parent_dir_name | awk -F'/' '{print $NF}')
+network=$last"_connection_to_airflow"
 
 # models/llama-2-13b-chat.Q5_K_M.gguf -> n_threads=1
 # models/llama-2-13b-chat.Q4_K_M.gguf -> n_threads=8-12
@@ -33,12 +37,12 @@ do
     docker remove "/llm-server-$i"
 
     if [ "$split" -eq 1 ]; then
-        docker run -e MODEL_NAME=$model -e N_THREADS=$n_threads --gpus all --ulimit memlock=16384:16384 --network qlora_semantic_extraction_connection_to_airflow -d -v "$(pwd)/models:/app/models" --name "llm-server-$i" llm-server
+        docker run -e MODEL_NAME=$model -e N_THREADS=$n_threads --gpus all --ulimit memlock=16384:16384 --network $network -d -v "$(pwd)/models:/app/models" --name "llm-server-$i" llm-server
     else
         mod=$(($i % 2))
         echo "mod=$mod"
         device="device=$mod"
-        docker run -e MODEL_NAME=$model -e N_THREADS=$n_threads --gpus $device --ulimit memlock=16384:16384 --network qlora_semantic_extraction_connection_to_airflow -d -v "$(pwd)/models:/app/models" --name "llm-server-$i" llm-server
+        docker run -e MODEL_NAME=$model -e N_THREADS=$n_threads --gpus $device --ulimit memlock=16384:16384 --network $network -d -v "$(pwd)/models:/app/models" --name "llm-server-$i" llm-server
     fi
     
 done

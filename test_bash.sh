@@ -1,20 +1,11 @@
 #!/usr/bin/bash
 
-name_pattern="llm-server-"
+dir=$(dirname "$1")
+echo "$dir"
+parent_dir_name=$PWD
+echo "$parent_dir_name"
 
-# Corrected variable assignment and command substitution
-dockers=$(docker ps -f "name=$name_pattern*" --format "{{.Names}}")
-
-if [[ -n $dockers ]]; then
-    echo "There are llm-servers docker running"
-    # Iterate over each line in the output
-    for i in $dockers
-    do
-        echo "Killing docker $i"
-        docker kill "$i"
-    done
-else
-    echo "There is no llm-servers docker running"
-fi
-
+last=$(echo $parent_dir_name | awk -F'/' '{print $NF}')
+network=$last"_connection_to_airflow"
+echo "network=$network"
 
