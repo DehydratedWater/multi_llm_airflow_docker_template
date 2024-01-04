@@ -10,8 +10,9 @@
 # Build the airflow docker image
 cd airflow_docker && ./build_extra_docker.sh && cd ..
 
+
 # Build the local llama server docker image
-./build_llm_server.sh
+cd inference_server_dockers/llama_cpp_server && ./build_llm_server.sh && cd ../..
 
 
 

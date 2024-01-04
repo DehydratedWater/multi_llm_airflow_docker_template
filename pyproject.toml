@@ -20,6 +20,7 @@ torchvision = "^0.16.2"
 torchaudio = "^2.1.2"
 apache-airflow = {version = "2.7.3", extras = ["celery"]}
 apache-airflow-providers-postgres = "^5.9.0"
+apache-airflow-providers-docker = "3.9.1"
 
 [build-system]
 requires = ["poetry-core"]

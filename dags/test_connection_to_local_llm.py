@@ -15,7 +15,7 @@ def request_result_from_llm():
 
     llm = ChatOpenAI(temperature=0.7,
                     model=model, 
-                    openai_api_base="http://llm-server-1:5556/v1", 
+                    openai_api_base="http://llm-server:5556/v1", 
                     openai_api_key="sx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
                     max_tokens=2000,
                     model_kwargs={

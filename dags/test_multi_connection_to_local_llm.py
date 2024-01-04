@@ -1,4 +1,5 @@
 import asyncio
+import time
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from langchain.chat_models import ChatOpenAI
@@ -26,7 +27,7 @@ Before creating JSON with the results I will list categories contained inside pr
 """
 
 async def request_result_from_llm():
-    model = "models/llama-2-13b-chat.Q5_K_M.gguf"
+    model = "models/llama-2-13b-chat.Q4_K_M.gguf"
 
     llm1 = ChatOpenAI(temperature=0.7,
                     model=model, 
@@ -66,40 +67,37 @@ async def request_result_from_llm():
                     },
                     streaming=False,
                     )
+    
+    llm4 = ChatOpenAI(temperature=0.7,
+                    model=model, 
+                    openai_api_base="http://llm-server-4:5556/v1", 
+                    openai_api_key="sx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                    max_tokens=2000,
+                    request_timeout=500,
+                    max_retries=1,
+                    model_kwargs={
+                        "logit_bias": {},
+                    },
+                    streaming=False,
+                    )
+    start_time = time.time()
 
-    p1 = llm1.apredict(prompt)
-    p2 = llm2.apredict(prompt)
-    p3 = llm3.apredict(prompt)
-    results = await asyncio.gather(p1, p2, p3)
-    print(results[0])
-    print(results[1])
-    print(results[2])
+    iterations = 10
 
-    p1 = llm1.apredict(prompt)
-    p2 = llm2.apredict(prompt)
-    p3 = llm3.apredict(prompt)
-    results = await asyncio.gather(p1, p2, p3)
-    print(results[0])
-    print(results[1])
-    print(results[2])
+    for _ in range(iterations):
+        p1 = llm1.apredict(prompt)
+        p2 = llm2.apredict(prompt)
+        p3 = llm3.apredict(prompt)
+        p4 = llm4.apredict(prompt)
+        results = await asyncio.gather(p1, p2, p3, p4)
+        print(results[0])
+        print(results[1])
+        print(results[2])
+        print(results[3])
 
-    p1 = llm1.apredict(prompt)
-    p2 = llm2.apredict(prompt)
-    p3 = llm3.apredict(prompt)
-    results = await asyncio.gather(p1, p2, p3)
-    print(results[0])
-    print(results[1])
-    print(results[2])
 
-    p1 = llm1.apredict(prompt)
-    p2 = llm2.apredict(prompt)
-    p3 = llm3.apredict(prompt)
-    results = await asyncio.gather(p1, p2, p3)
-    print(results[0])
-    print(results[1])
-    print(results[2])
 
-    return "ok"
+    return f"Test iterations [count {iterations}] done in: {(time.time() - start_time)/60:.2f} minutes"
 
 
 def run_async():

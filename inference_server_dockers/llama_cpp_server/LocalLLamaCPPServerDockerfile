@@ -14,7 +14,9 @@ ENV CXX=g++-11 \
 RUN pip3 install llama-cpp-python[server]
 
 # ENTRYPOINT [ "" ]
+ENV MODEL_NAME=${MODEL_NAME:-models/llama-2-13b-chat.Q5_K_M.gguf}
 
 EXPOSE 5556
 
-ENTRYPOINT ["python3", "-m", "llama_cpp.server", "--model", "models/llama-2-13b-chat.Q5_K_M.gguf", "--n_gpu_layers", "80", "--port", "5556", "--host", "0.0.0.0"]
+
+ENTRYPOINT python3 -m llama_cpp.server --model ${MODEL_NAME} --n_gpu_layers 200 --port 5556 --host 0.0.0.0
