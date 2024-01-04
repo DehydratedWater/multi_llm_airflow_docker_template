@@ -1,7 +1,5 @@
 #!/bin/bash
 
-docker kill llm-server-1
-docker kill llm-server-2
-docker kill llm-server-3
-# docker kill llm-server-4
+./stop_llm_servers_for_data_generation.sh
+
 docker compose down

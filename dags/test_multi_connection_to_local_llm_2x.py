@@ -99,8 +99,6 @@ async def request_result_from_llm():
     results = await asyncio.gather(p1, p2)
     print(results[0])
     print(results[1])
-    print(results[2])
-    print(results[3])
 
 
 

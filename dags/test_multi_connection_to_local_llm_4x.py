@@ -114,7 +114,7 @@ def run_async():
    return result
 
 with DAG(
-    dag_id='test_multi_local_llm_dag',
+    dag_id='test_multi_local_llm_dag_x4',
     default_args=default_args,
     description='Test Multi Local LLM DAG',
     catchup=False,

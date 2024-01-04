@@ -68,7 +68,29 @@ __Warning__: _You may need to adapt the Nvidia image version used in `LocalLLama
 6. After the build is complete, there should be a Docker image `llm-server` containing the dockerized `llama.cpp` server with GPU support, and an `extending_airflow` image, containing Airflow extended with chosen Python libraries.
 7. To run everything, execute `./start_all.sh` and to stop it, use `./stop_all.sh`.
 8. Open a browser and navigate to http://0.0.0.0:8080 to launch the Airflow webserver. Log in with username: `airflow` and password: `airflow`.
-9. Refer to `dags/test_dag.py` and `dags/test_connection_to_local_llm.py` as starting points.
+9. Refer to `dags/test_connection_to_local_llm.py` and `dags/test_multi_connection_to_local_llm_4x.py` as starting points.
+
+### How to modify number of llama.cpp servers
+The script `run_llm_servers_for_data_generation.sh` provides parameters to configure how many llama.cpp servers should be deployed
+
+The default values:
+```bash
+num=4 # number of servers to deploy use -n flag to change
+model="models/llama-2-13b-chat.Q5_K_M.gguf" # llm model to deploy with llama.cpp server, use -m flat
+split=0 # if 0 models will load between 2 gpus without spliting, if 1 models will be splited between all gpus, use -s flag
+n_threads=1 # number of threads for every llama.cpp server, use -t flag
+
+```
+
+Example how to run:
+```bash
+./run_llm_servers_for_data_generation.sh -n 4 -m models/llama-2-13b-chat.Q4_K_M.gguf -t 8 -s 0
+```
+
+You can modify it in `./start_all.sh` script
+
+You can also manually stop just inference servers by running command `./stop_llm_servers_for_data_generation.sh`
+
 
 ### Using Just the Dockerized Model Without Airflow
 1. Download the chosen LLM model in `GUFF` format (or any other format supported by LLama.Cpp) and place it in the `models` folder.
@@ -77,6 +99,7 @@ __Warning__: _You may need to adapt the Nvidia image version used in `LocalLLama
 4. Run `./build_llm_server.sh` to build the dockerized version of the LLama.cpp server with GPU support.
 5. Execute `./run_llm_server.sh` and `docker kill llm-server` and to stop it. Server will run on `5556` port, you can check loaded models `http://localhost:5556/v1/models` or documentation `http://localhost:5556/docs#/`
 6. See `run_completion_on_local_llama.py` as a starting point for development without Airflow. You can run it within the Poetry environment.
+
 
 ### Create `.env` for Airflow
 Example of an `.env` file:
