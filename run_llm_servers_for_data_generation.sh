@@ -1,15 +1,21 @@
 #!/usr/bin/bash
 
 num=4
-image="models/llama-2-13b-chat.Q4_K_M.gguf"
+image="models/llama-2-13b-chat.Q5_K_M.gguf"
 split=0
+n_threads=1
 
-while getopts n:i: flag
+
+# models/llama-2-13b-chat.Q5_K_M.gguf -> n_threads=1
+# models/llama-2-13b-chat.Q4_K_M.gguf -> n_threads=8-12
+
+while getopts n:i:s:t: flag
 do
     case "${flag}" in
         n) num=${OPTARG};;
         i) image=${OPTARG};;
         s) split=${OPTARG};;
+        t) n_threads=${OPTARG};;
     esac
 done
 
@@ -27,12 +33,12 @@ do
     docker remove "/llm-server-$i"
 
     if [ "$split" -eq 1 ]; then
-        docker run -e MODEL_NAME=$image --gpus all --ulimit memlock=16384:16384 --network qlora_semantic_extraction_connection_to_airflow -d -v "$(pwd)/models:/app/models" --name "llm-server-$i" llm-server
+        docker run -e MODEL_NAME=$image -e N_THREADS=$n_threads --gpus all --ulimit memlock=16384:16384 --network qlora_semantic_extraction_connection_to_airflow -d -v "$(pwd)/models:/app/models" --name "llm-server-$i" llm-server
     else
         mod=$(($i % 2))
         echo "mod=$mod"
         device="device=$mod"
-        docker run -e MODEL_NAME=$image --gpus $device --ulimit memlock=16384:16384 --network qlora_semantic_extraction_connection_to_airflow -d -v "$(pwd)/models:/app/models" --name "llm-server-$i" llm-server
+        docker run -e MODEL_NAME=$image -e N_THREADS=$n_threads --gpus $device --ulimit memlock=16384:16384 --network qlora_semantic_extraction_connection_to_airflow -d -v "$(pwd)/models:/app/models" --name "llm-server-$i" llm-server
     fi
     
 done

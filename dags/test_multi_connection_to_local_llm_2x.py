@@ -42,7 +42,7 @@ async def request_result_from_llm():
                     streaming=False,
                     )
     
-    llm2 = ChatOpenAI(temperature=0.6,
+    llm2 = ChatOpenAI(temperature=0.7,
                     model=model, 
                     openai_api_base="http://llm-server-2:5556/v1", 
                     openai_api_key="sx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
@@ -55,34 +55,34 @@ async def request_result_from_llm():
                     streaming=False,
                     )
     
-    llm3 = ChatOpenAI(temperature=0.7,
-                    model=model, 
-                    openai_api_base="http://llm-server-3:5556/v1", 
-                    openai_api_key="sx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-                    max_tokens=2000,
-                    request_timeout=500,
-                    max_retries=1,
-                    model_kwargs={
-                        "logit_bias": {},
-                    },
-                    streaming=False,
-                    )
+    # llm3 = ChatOpenAI(temperature=0.7,
+    #                 model=model, 
+    #                 openai_api_base="http://llm-server-3:5556/v1", 
+    #                 openai_api_key="sx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    #                 max_tokens=2000,
+    #                 request_timeout=500,
+    #                 max_retries=1,
+    #                 model_kwargs={
+    #                     "logit_bias": {},
+    #                 },
+    #                 streaming=False,
+    #                 )
     
-    llm4 = ChatOpenAI(temperature=0.6,
-                    model=model, 
-                    openai_api_base="http://llm-server-4:5556/v1", 
-                    openai_api_key="sx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-                    max_tokens=2000,
-                    request_timeout=500,
-                    max_retries=1,
-                    model_kwargs={
-                        "logit_bias": {},
-                    },
-                    streaming=False,
-                    )
+    # llm4 = ChatOpenAI(temperature=0.7,
+    #                 model=model, 
+    #                 openai_api_base="http://llm-server-4:5556/v1", 
+    #                 openai_api_key="sx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    #                 max_tokens=2000,
+    #                 request_timeout=500,
+    #                 max_retries=1,
+    #                 model_kwargs={
+    #                     "logit_bias": {},
+    #                 },
+    #                 streaming=False,
+    #                 )
     start_time = time.time()
 
-    iterations = 10
+    iterations = 20
 
     async def run_iteration(llm, prompt, iterations):
         results = []
@@ -95,9 +95,8 @@ async def request_result_from_llm():
 
     p1 = run_iteration(llm1, prompt, iterations)
     p2 = run_iteration(llm2, prompt, iterations)
-    p3 = run_iteration(llm3, prompt, iterations)
-    p4 = run_iteration(llm4, prompt, iterations)
-    results = await asyncio.gather(p1, p2, p3, p4)
+
+    results = await asyncio.gather(p1, p2)
     print(results[0])
     print(results[1])
     print(results[2])
@@ -114,14 +113,14 @@ def run_async():
    return result
 
 with DAG(
-    dag_id='test_multi_local_llm_dag',
+    dag_id='test_multi_local_llm_dag_2x',
     default_args=default_args,
     description='Test Multi Local LLM DAG',
     catchup=False,
     schedule_interval='@once',
 ) as dag:
     llm_operator = PythonOperator(
-        task_id='test_multi_local_llm_task',
+        task_id='test_multi_local_llm_task_2x',
         python_callable=run_async,
     )
 
